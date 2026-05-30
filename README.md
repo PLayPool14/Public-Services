@@ -53,4 +53,4 @@ Output will be in the `dist/` folder.
 
 ## License
 
-MIT — by Gla$$Walker(PLayPool14)
+MIT — by Gla$$Walker/PLayPool14
