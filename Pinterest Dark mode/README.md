@@ -19,7 +19,10 @@ A browser extension that makes Pinterest actually dark. Built at 3AM because the
  
 1. Download `Pinterest_Dark_Mode.zip` from this folder
 2. Unzip it
-3. Open `edge://extensions/` or `chrome://extensions`
+3. Open one of these
+- `edge://extensions/`
+- `chrome://extensions`
+- `opera://extensions/`
 4. Enable **Developer mode** (top right toggle)
 5. Click **Load unpacked** and select the unzipped folder
 ## Known issues
