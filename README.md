@@ -29,8 +29,8 @@ One-click installer — no setup needed.
 **Requirements:** Node.js 18+
 
 ```bash
-git clone https://github.com/GlaSS-Walker/resident-sleeper
-cd resident-sleeper
+git clone https://github.com/PLayPool14/Public-Services.git
+cd "Public-Services/Resident Sleeper pre (npm run build)"
 npm install
 npm start
 ```
