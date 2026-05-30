@@ -28,5 +28,5 @@ A browser extension that makes Pinterest actually dark. Built at 3AM because the
 - If something looks off, reinstall the latest version
 ## License
  
-MIT — by GlaSS Walker
+MIT — by Gla$$Walker/PLayPool14
  
