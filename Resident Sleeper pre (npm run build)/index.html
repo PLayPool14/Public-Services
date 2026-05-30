@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Resident Sleeper</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+        background-color: #000;
+        color: #cc0000;
+        font-family: 'Consolas', 'Courier New', monospace;
+        text-align: center;
+        border: 2px solid #cc0000;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .title-bar {
+        background: #1a0000;
+        color: #ff2222;
+        padding: 7px 10px;
+        text-align: left;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: default;
+        border-bottom: 1px solid #cc0000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+        flex-shrink: 0;
+        text-shadow: 0 0 8px #ff0000;
+        letter-spacing: 1px;
+    }
+    .close-btn {
+        cursor: pointer;
+        padding: 2px 8px;
+        background: #2a0000;
+        color: #ff4444;
+        border: 1px solid #cc0000;
+        font-family: 'Consolas', monospace;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    .close-btn:hover { background: #ff2222; color: #000; }
+
+    .main-layout {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        overflow: hidden;
+    }
+
+    .control-panel {
+        width: 360px;
+        flex-shrink: 0;
+        border-right: 1px solid #440000;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 8px;
+    }
+
+    .log-panel {
+        width: 416px;
+        display: none;
+        background: #050000;
+        text-align: left;
+        flex-direction: column;
+        border-left: 1px solid #cc0000;
+        height: 100%;
+    }
+
+    h1 {
+        font-size: 20px;
+        color: #ff2222;
+        margin: 12px 0 4px 0;
+        border-bottom: 1px solid #440000;
+        padding-bottom: 8px;
+        letter-spacing: 4px;
+        text-shadow: 0 0 10px #ff000066;
+    }
+
+    /* TIMER */
+    #countdown {
+        color: #ff2222;
+        font-size: 42px;
+        display: block;
+        margin: 8px 0 4px 0;
+        font-weight: bold;
+        text-shadow: 0 0 16px #ff000099;
+        letter-spacing: 4px;
+    }
+
+    /* PROGRESS BAR */
+    .progress-wrap {
+        margin: 4px 20px 10px 20px;
+        background: #1a0000;
+        border: 1px solid #440000;
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    #progressBar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #660000, #ff2222);
+        border-radius: 4px;
+        transition: width 1s linear;
+        box-shadow: 0 0 6px #ff000088;
+    }
+
+    button {
+        background: #0d0000;
+        color: #aa0000;
+        border: 1px solid #440000;
+        margin: 5px auto;
+        padding: 10px;
+        width: 300px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+        display: block;
+        font-family: 'Consolas', 'Courier New', monospace;
+        letter-spacing: 1px;
+        transition: all 0.15s;
+    }
+    button:hover {
+        background: #440000;
+        color: #ff2222;
+        border-color: #cc0000;
+        text-shadow: 0 0 6px #ff2222;
+    }
+    input {
+        background: #0d0000;
+        color: #ff2222;
+        border: 1px solid #440000;
+        width: 52px;
+        text-align: center;
+        font-size: 13px;
+        font-family: 'Consolas', monospace;
+        padding: 3px;
+    }
+
+    .custom-row {
+        margin: 8px 20px;
+        border: 1px dashed #440000;
+        padding: 10px;
+        font-size: 13px;
+        color: #880000;
+    }
+    .custom-row button {
+        width: 80px;
+        display: inline-block;
+        padding: 5px;
+        margin: 0 0 0 8px;
+        vertical-align: middle;
+        font-size: 11px;
+    }
+
+    .danger {
+        color: #ff2222 !important;
+        border-color: #cc0000 !important;
+        margin-top: 10px;
+    }
+    .danger:hover {
+        background: #cc0000 !important;
+        color: #000 !important;
+    }
+
+    .footer {
+        font-size: 11px;
+        margin-top: auto;
+        color: #660000;
+        font-weight: bold;
+        padding-bottom: 5px;
+    }
+    #appPath {
+        font-size: 8px;
+        color: #330000;
+        margin-top: 3px;
+        word-break: break-all;
+        padding: 0 10px;
+        line-height: 1.2;
+    }
+
+    #statusNotify {
+        font-size: 11px;
+        color: #00cc44;
+        height: 18px;
+        margin-top: 6px;
+        font-weight: bold;
+        text-shadow: 0 0 6px #00cc44;
+    }
+
+    /* LOG PANEL */
+    .log-header {
+        background: #1a0000;
+        color: #ff2222;
+        padding: 8px;
+        font-size: 12px;
+        font-weight: bold;
+        border-bottom: 1px solid #cc0000;
+        text-align: center;
+        letter-spacing: 2px;
+        text-shadow: 0 0 6px #ff000066;
+    }
+    .log-container {
+        padding: 0;
+        flex-grow: 1;
+        overflow-y: auto;
+        font-size: 11px;
+        background: #000;
+    }
+    .log-container::-webkit-scrollbar { width: 6px; }
+    .log-container::-webkit-scrollbar-track { background: #0d0000; }
+    .log-container::-webkit-scrollbar-thumb { background: #440000; border-radius: 3px; }
+
+    table { width: 100%; border-collapse: collapse; color: #cc0000; table-layout: fixed; }
+    th, td { border: 1px solid #1a0000; padding: 7px 5px; text-align: left; overflow: hidden; white-space: nowrap; }
+    th { background: #0d0000; font-size: 10px; color: #660000; border-bottom: 1px solid #330000; letter-spacing: 1px; }
+    tr:hover td { background: #0d0000; }
+    .cancelled-row td { color: #ff6666; background: #1a0000; }
+    .active-row td { color: #ffaa00; text-shadow: 0 0 4px #ffaa0066; }
+
+    .clear-logs-btn {
+        background: #1a0000;
+        color: #cc0000;
+        border: none;
+        border-top: 1px solid #cc0000;
+        font-size: 11px;
+        width: 100%;
+        margin: 0;
+        padding: 10px;
+        cursor: pointer;
+        flex-shrink: 0;
+        font-family: 'Consolas', monospace;
+        letter-spacing: 1px;
+    }
+    .clear-logs-btn:hover { background: #cc0000; color: #000; }
+
+    /* scanlines */
+    body::after {
+        content: '';
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: repeating-linear-gradient(
+            0deg, transparent, transparent 2px,
+            rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px
+        );
+        pointer-events: none;
+        z-index: 9999;
+    }
+</style>
+</head>
+<body>
+
+<div class="title-bar" id="titleBar">
+    <span> RESIDENT SLEEPER v2.0</span>
+    <span class="close-btn" id="closeBtn">X</span>
+</div>
+
+<div class="main-layout">
+    <div class="control-panel">
+        <h1>TIMER</h1>
+        <span id="countdown">00:00:00</span>
+        <div class="progress-wrap">
+            <div id="progressBar"></div>
+        </div>
+
+        <button onclick="logAndShutdown(1800, '30m')">30 MINUTES</button>
+        <button onclick="logAndShutdown(3600, '1h')">1 HOUR</button>
+        <button onclick="logAndShutdown(7200, '2h')">2 HOURS</button>
+
+        <div class="custom-row">
+            Shutdown in: <input type="text" id="customTime" value="1.5"> H
+            <button onclick="var v=document.getElementById('customTime').value; logAndShutdown(Math.round(parseFloat(v)*3600), v+'h')">START</button>
+        </div>
+
+        <button onclick="cancelShutdown()" class="danger">CANCEL SHUTDOWN</button>
+
+        <div id="statusNotify"></div>
+
+        <button id="toggleBtn" onclick="toggleLogView()" style="color:#444;width:200px;font-size:11px;margin-top:12px;border-color:#220000;">VIEW REGISTER</button>
+
+        <div class="footer">
+            by GlaSSwalker
+            <div id="appPath"></div>
+        </div>
+    </div>
+
+    <div class="log-panel" id="logPanel">
+        <div class="log-header">RS_LOG_REGISTER</div>
+        <div class="log-container" id="logTableBody"></div>
+        <button class="clear-logs-btn" onclick="clearLogs()">CLEAR LOG HISTORY</button>
+    </div>
+</div>
+
+<script>
+    var timerInterval = null;
+    var statusTimeout = null;
+    var remainingSeconds = 0;
+    var totalSeconds = 0;
+    var isLogVisible = false;
+    var currentSessionID = "0";
+    var logPath = "";
+    var logQueue = [];
+
+    // --- DRAG ---
+    var dragging = false, startX, startY;
+    document.getElementById('titleBar').addEventListener('mousedown', function(e) {
+        if (e.target.id === 'closeBtn') return;
+        dragging = true; startX = e.screenX; startY = e.screenY;
+    });
+    document.addEventListener('mousemove', function(e) {
+        if (!dragging) return;
+        var dx = e.screenX - startX;
+        var dy = e.screenY - startY;
+        startX = e.screenX; startY = e.screenY;
+        window.api.drag(dx, dy);
+    });
+    document.addEventListener('mouseup', function() {
+        if (dragging) { dragging = false; window.api.savePosition(); }
+    });
+    document.getElementById('closeBtn').addEventListener('click', function() {
+        window.api.savePosition();
+        window.api.close();
+    });
+
+    // --- IPC ---
+    window.api.onAppPath(function(p) {
+        logPath = p;
+        document.getElementById('appPath').innerText = p;
+        checkActiveSession();
+    });
+
+    window.api.onLogData(function(d) {
+        var cb = logQueue.shift();
+        if (cb) cb(d);
+    });
+
+    window.api.onWriteDone(function(d) {});
+    window.api.onDeleteDone(function(d) {
+        currentSessionID = "0";
+        showStatus("LOGS CLEARED", false);
+        doReadLog(function(d) { handleRefreshLogs(d); });
+    });
+
+    // --- HELPERS ---
+    function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+    function formatDate(d) {
+        return pad(d.getDate()) + "." + pad(d.getMonth()+1) + "." + d.getFullYear() + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+    }
+
+    function showStatus(msg, isError) {
+        var el = document.getElementById('statusNotify');
+        el.innerText = msg;
+        el.style.color = isError ? "#ff4444" : "#00cc44";
+        el.style.textShadow = isError ? "0 0 6px #ff4444" : "0 0 6px #00cc44";
+        if (statusTimeout) clearTimeout(statusTimeout);
+        statusTimeout = setTimeout(function() { el.innerText = ""; }, 3000);
+    }
+
+    function updateTimerDisplay() {
+        var h = Math.floor(remainingSeconds / 3600);
+        var m = Math.floor((remainingSeconds % 3600) / 60);
+        var s = remainingSeconds % 60;
+        document.getElementById('countdown').innerText = pad(h) + ":" + pad(m) + ":" + pad(s);
+        // progress bar
+        var pct = totalSeconds > 0 ? ((totalSeconds - remainingSeconds) / totalSeconds * 100) : 0;
+        document.getElementById('progressBar').style.width = pct + '%';
+    }
+
+    function startVisualTimer(sec, total) {
+        remainingSeconds = sec;
+        totalSeconds = total || sec;
+        updateTimerDisplay();
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(function() {
+            if (remainingSeconds > 0) {
+                remainingSeconds--;
+                updateTimerDisplay();
+            } else {
+                clearInterval(timerInterval);
+                currentSessionID = "0";
+                document.getElementById('progressBar').style.width = '100%';
+            }
+        }, 1000);
+    }
+
+    function doReadLog(cb) {
+        logQueue.push(cb);
+        window.api.readLog(logPath);
+    }
+
+    function getNextID(lines) {
+        var maxID = 0;
+        for (var i = 0; i < lines.length; i++) {
+            if (lines[i].indexOf('|') !== -1) {
+                var id = parseInt(lines[i].split('|')[0]);
+                if (!isNaN(id) && id > maxID) maxID = id;
+            }
+        }
+        return maxID + 1;
+    }
+
+    function handleCheckSession(d) {
+        if (!d.ok || !d.data) return;
+        var lines = d.data.split('\n');
+        var lastLine = "";
+        for (var i = 0; i < lines.length; i++) {
+            if (lines[i].replace(/\s/g, '') !== '') lastLine = lines[i];
+        }
+        if (!lastLine) return;
+        var parts = lastLine.split('|');
+        if (parts.length >= 4 && parts[2].indexOf('CANCEL') === -1) {
+            var dParts = parts[3].split(' ');
+            if (dParts.length < 2) return;
+            var dp = dParts[0].split('.');
+            var tp = dParts[1].split(':');
+            var shutdownDate = new Date(dp[2], dp[1]-1, dp[0], tp[0], tp[1]);
+            var now = new Date();
+            var diffMs = shutdownDate.getTime() - now.getTime();
+            if (diffMs > 0) {
+                currentSessionID = parts[0];
+                var secLeft = Math.floor(diffMs / 1000);
+                // figure out original total from log entry
+                var startParts = parts[1] ? parts[1].split(' ') : [];
+                var total = secLeft; // fallback
+                if (startParts.length >= 2) {
+                    var sp = startParts[0].split('.');
+                    var st = startParts[1].split(':');
+                    var startDate = new Date(sp[2], sp[1]-1, sp[0], st[0], st[1]);
+                    total = Math.round((shutdownDate - startDate) / 1000);
+                }
+                startVisualTimer(secLeft, total);
+                showStatus("RECOVERED [ID:" + currentSessionID + "]", false);
+            }
+        }
+    }
+
+    function handleRefreshLogs(d) {
+        var html = "<table><colgroup><col style='width:36px'><col style='width:130px'><col style='width:70px'><col style='width:auto'></colgroup>" +
+            "<tr><th>ID</th><th>DATE / TIME</th><th>OPT</th><th>SHUTDOWN AT</th></tr>";
+        if (d.ok && d.data) {
+            var lines = d.data.split('\n');
+            for (var i = lines.length - 1; i >= 0; i--) {
+                var line = lines[i];
+                if (!line || line.replace(/\s/g, '') === '') continue;
+                var parts = line.split('|');
+                if (parts.length >= 2) {
+                    var isCancel = parts[2] && parts[2].indexOf('CANCEL') !== -1;
+                    var isActive = parts[0] === currentSessionID && !isCancel;
+                    var cls = isCancel ? " class='cancelled-row'" : (isActive ? " class='active-row'" : "");
+                    html += "<tr" + cls + ">" +
+                        "<td>" + parts[0] + "</td>" +
+                        "<td>" + parts[1] + "</td>" +
+                        "<td>" + (parts[2] || '') + "</td>" +
+                        "<td>" + (parts[3] || '---') + "</td>" +
+                        "</tr>";
+                }
+            }
+        } else {
+            html += "<tr><td colspan='4' style='text-align:center;padding:24px;color:#330000;'>Register is empty.</td></tr>";
+        }
+        html += "</table>";
+        document.getElementById('logTableBody').innerHTML = html;
+    }
+
+    // --- ACTIONS ---
+    function logAndShutdown(sec, desc) {
+        window.api.shutdown(sec);
+        doReadLog(function(d) {
+            var lines = (d.ok && d.data) ? d.data.split('\n') : [];
+            currentSessionID = String(getNextID(lines));
+            startVisualTimer(sec, sec);
+            var now = new Date();
+            var shutdownTime = new Date(now.getTime() + sec * 1000);
+            var row = currentSessionID + "|" + formatDate(now) + "|" + desc + "|" + formatDate(shutdownTime);
+            window.api.writeLog(logPath, row);
+            showStatus("SHUTDOWN ON [ID:" + currentSessionID + "]", false);
+            if (isLogVisible) doReadLog(function(d2) { handleRefreshLogs(d2); });
+        });
+    }
+
+    function cancelShutdown() {
+        window.api.abort();
+        var canceledID = currentSessionID;
+        if (timerInterval) clearInterval(timerInterval);
+        remainingSeconds = 0; totalSeconds = 0;
+        updateTimerDisplay();
+        var now = new Date();
+        var logID = (canceledID === "0") ? "!" : canceledID;
+        window.api.writeLog(logPath, logID + "|" + formatDate(now) + "|CANCEL|CANCELED");
+        showStatus("STOPPED [ID:" + (canceledID === "0" ? "?" : canceledID) + "]", true);
+        currentSessionID = "0";
+        if (isLogVisible) doReadLog(function(d) { handleRefreshLogs(d); });
+    }
+
+    function toggleLogView() {
+        if (!isLogVisible) {
+            window.api.resize(776, 702);
+            document.getElementById('logPanel').style.display = 'flex';
+            doReadLog(function(d) { handleRefreshLogs(d); });
+            document.getElementById('toggleBtn').innerText = 'HIDE REGISTER';
+        } else {
+            window.api.resize(360, 702);
+            document.getElementById('logPanel').style.display = 'none';
+            document.getElementById('toggleBtn').innerText = 'VIEW REGISTER';
+        }
+        isLogVisible = !isLogVisible;
+    }
+
+    function clearLogs() {
+        window.api.deleteLog(logPath);
+    }
+
+    function checkActiveSession() {
+        doReadLog(function(d) { handleCheckSession(d); });
+    }
+
+    window.api.getAppPath();
+</script>
+</body>
+</html>
