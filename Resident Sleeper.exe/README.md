@@ -1,0 +1,56 @@
+# Resident Sleeper v2.0
+
+A shutdown timer app with a terminal aesthetic, built with Electron.
+
+![version](https://img.shields.io/badge/version-2.0.0-red)
+![platform](https://img.shields.io/badge/platform-Windows-blue)
+![made by](https://img.shields.io/badge/by-GlaSS%20Walker-darkred)
+![license](https://img.shields.io/badge/license-MIT-green)
+![electron](https://img.shields.io/badge/electron-28-47848F)
+
+## Features
+
+- Countdown timer with HH:MM:SS display
+- Quick presets: 30 minutes, 1 hour, 2 hours
+- Custom shutdown time with decimal support (e.g. 1.5h)
+- Cancel shutdown at any time
+- Session log with indexed entries (date, option, shutdown time)
+- Log persists between sessions and loads last session on startup
+- Frameless window with drag support and saved position
+
+## Download
+
+Grab the latest `.exe` from [Releases](../../releases).
+
+One-click installer — no setup needed.
+
+## Build from source
+
+**Requirements:** Node.js 18+
+
+```bash
+git clone https://github.com/GlaSS-Walker/resident-sleeper
+cd resident-sleeper
+npm install
+npm start
+```
+
+To build the installer:
+
+```bash
+npm run build
+```
+
+Output will be in the `dist/` folder.
+
+## Log file
+
+`RS_LOG.txt` is saved next to the `.exe` file. Each entry contains:
+- ID (indexed)
+- Date and time of session start
+- Option used (30m / 1h / 2h / custom / CANCEL)
+- Scheduled shutdown time
+
+## License
+
+MIT — by Gla$$Walker/PLayPool14
