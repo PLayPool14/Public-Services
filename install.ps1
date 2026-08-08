@@ -10,10 +10,15 @@ $tempDir     = Join-Path $env:TEMP "ResidentSleeper_install"
 
 function Write-Banner {
     Write-Host ""
-    Write-Host " +-------------------------------------+" -ForegroundColor Cyan
+    Write-Host "                                                                 
+    Write-Host " _____         _   _         _      _____ _                     " -ForegroundColor Cyan                 
+    Write-Host "| __  |___ ___|_|_| |___ ___| |_   |   __| |___ ___ ___ ___ ___ " -ForegroundColor Cyan
+    Write-Host "|    -| -_|_ -| | . | -_|   |  _|  |__   | | -_| -_| . | -_|  _|" -ForegroundColor Cyan
+    Write-Host "|__|__|___|___|_|___|___|_|_|_|    |_____|_|___|___|  _|___|_|  " -ForegroundColor Cyan
+    Write-Host "                                                   |_|          " -ForegroundColor Cyan
     Write-Host " |                                       |" -ForegroundColor Cyan
-    Write-Host " |    RESIDENT  SLEEPER  INSTALLER      |" -ForegroundColor Cyan
-    Write-Host " |  Zzz... shutdown timer for Windows   |" -ForegroundColor DarkCyan
+    Write-Host " |    RESIDENT  SLEEPER  INSTALLER       |" -ForegroundColor Cyan
+    Write-Host " |  Zzz... shutdown timer for Windows    |" -ForegroundColor DarkCyan
     Write-Host " |                                       |" -ForegroundColor Cyan
     Write-Host " +-------------------------------------+" -ForegroundColor Cyan
     Write-Host ""
