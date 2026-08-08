@@ -33,8 +33,8 @@ Grab the latest `.zip` from [Releases](../../releases), extract it anywhere, and
 ## Build from source
 **Requirements:** Node.js 18+
 ```bash
-git clone https://github.com/GlaSS-Walker/resident-sleeper
-cd resident-sleeper
+git clone https://github.com/PLayPool14/Public-Services
+cd "Public-Services/Resident Sleeper pre (npm run build)"
 npm install
 npm start
 ```
