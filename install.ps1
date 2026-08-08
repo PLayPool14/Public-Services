@@ -138,6 +138,7 @@ Get-ChildItem -Path $exeFile.Directory -Recurse | ForEach-Object {
 }
 
 $finalExePath = Join-Path $installDir $exeFile.Name
+$iconFile = Get-ChildItem -Path $installDir -Recurse -Filter "*.ico" | Select-Object -First 1
 
 Remove-Item $tempDir -Recurse -Force
 
@@ -158,6 +159,14 @@ if ($shortcutAnswer -eq "y" -or $shortcutAnswer -eq "Y")
     $shortcut.TargetPath = $finalExePath
     $shortcut.WorkingDirectory = $installDir
     $shortcut.Description = "Resident Sleeper - shutdown timer"
+    if ($iconFile)
+    {
+        $shortcut.IconLocation = $iconFile.FullName
+    }
+    else
+    {
+        $shortcut.IconLocation = $finalExePath
+    }
     $shortcut.Save()
     Write-Host " [OK] Shortcut created on Desktop." -ForegroundColor Green
 }
